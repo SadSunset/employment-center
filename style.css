@@ -113,24 +113,38 @@
 
 .vacancy {
     margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
 }
 
-.job-name {
+.vacancy h3 {
+    margin-top: 0;
+}
+
+.vacancy .salary {
     font-weight: bold;
 }
 
-.description {
-    margin-top: 10px;
-}
-
-.salary {
-    color: green;
-}
-
-.btn-more {
+.button {
     display: inline-block;
-    padding: 5px 10px;
-    background-color: #777;
+    padding: 3px 3px;
+    background-color: #f44336;
     color: #fff;
     text-decoration: none;
+    border-radius: 5px;
+}
+
+.pagination button {
+    margin-right: 5px;
+    background-color: transparent;
+    border: none;
+    color: #000;
+    cursor: pointer;
+}
+
+.pagination button.active {
+    font-weight: bold;
+    background-color: #a5908f;
+    color: #fff;
+    cursor: default;
 }

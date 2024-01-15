@@ -560,50 +560,89 @@ class ItcSlider {
 
 ItcSlider.createInstances();
 
-window.addEventListener('DOMContentLoaded', () => {
-    const xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            const xmlDoc = this.responseXML;
-            const vacancies = xmlDoc.getElementsByTagName('vacancy');
+var currentPage = 1;
+var vacanciesPerPage = 5;
+var vacancies;
 
-            // Перебираем все вакансии
-            for (let i = 0; i < vacancies.length; i++) {
-                const vacancy = vacancies[i];
-                const jobName = vacancy.getElementsByTagName('job-name')[0].textContent;
-                //const description = vacancy.getElementsByTagName('description')[0].textContent;
-                const salary = vacancy.getElementsByTagName('salary')[0].textContent;
-                const url = vacancy.getElementsByTagName('url')[0].textContent;
-                // Создаем HTML элементы для отображения вакансии
-                const vacancyDiv = document.createElement('div');
-                vacancyDiv.classList.add('vacancy');
-
-                const jobNameDiv = document.createElement('div');
-                jobNameDiv.classList.add('job-name');
-                jobNameDiv.textContent = jobName;
-
-                // const descriptionDiv = document.createElement('div');
-                // descriptionDiv.classList.add('description');
-                // descriptionDiv.innerHTML = description;
-
-                const salaryDiv = document.createElement('div');
-                salaryDiv.classList.add('salary');
-                salaryDiv.textContent = `Зарплата: ${salary}`;
-
-                const btnMore = document.createElement('a');
-                btnMore.classList.add('btn-more');
-                btnMore.textContent = 'Подробнее';
-                btnMore.href = url;
-
-                // Добавляем HTML элементы на страницу
-                vacancyDiv.appendChild(jobNameDiv);
-                //vacancyDiv.appendChild(descriptionDiv);
-                vacancyDiv.appendChild(salaryDiv);
-                vacancyDiv.appendChild(btnMore);
-                document.getElementById('vacancies-container').appendChild(vacancyDiv);
-            }
+// Загрузка XML файла
+function loadXML() {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            vacancies = xmlhttp.responseXML.getElementsByTagName("vacancy");
+            displayVacancies(currentPage);
         }
     };
-    xhttp.open('GET', 'example_1.xml', true);
-    xhttp.send();
-});
+    xmlhttp.open("GET", "example_1.xml", true);
+    xmlhttp.send();
+}
+
+// Отображение вакансий
+function displayVacancies(pageNumber) {
+    var vacanciesDiv = document.getElementById("vacancies");
+    var startIndex = (pageNumber - 1) * vacanciesPerPage;
+    var endIndex = startIndex + vacanciesPerPage;
+
+    // Очищаем предыдущие результаты
+    vacanciesDiv.innerHTML = "";
+
+    // Выводим вакансии текущей страницы
+    for (var i = startIndex; i < endIndex && i < vacancies.length; i++) {
+        var vacancy = vacancies[i];
+        var jobName = vacancy.getElementsByTagName("job-name")[0].textContent;
+        var salary = vacancy.getElementsByTagName("salary")[0].textContent;
+
+        var vacancyDiv = document.createElement("div");
+        vacancyDiv.classList.add("vacancy");
+
+        var title = document.createElement("h3");
+        title.textContent = jobName;
+
+        var salarySpan = document.createElement("span");
+        salarySpan.classList.add("salary");
+        salarySpan.textContent = "Зарплата: " + salary;
+
+        var button = document.createElement("a");
+        button.classList.add("button");
+        button.textContent = "Подробнее";
+        button.href = vacancy.getElementsByTagName("url")[0].textContent;
+        button.target = "_blank";
+
+        vacancyDiv.appendChild(title);
+        vacancyDiv.appendChild(salarySpan);
+        vacancyDiv.appendChild(button);
+
+        vacanciesDiv.appendChild(vacancyDiv);
+    }
+
+    // Отображение пагинации
+    displayPagination();
+}
+
+// Отображение пагинации
+function displayPagination() {
+    var paginationDiv = document.querySelector(".pagination");
+    paginationDiv.innerHTML = "";
+
+    var totalPages = Math.ceil(vacancies.length / vacanciesPerPage);
+
+    for (var i = 1; i <= totalPages; i++) {
+        var pageButton = document.createElement("button");
+        pageButton.textContent = i;
+        pageButton.addEventListener("click", function () {
+            currentPage = parseInt(this.textContent);
+            displayVacancies(currentPage);
+        });
+
+        if (i === currentPage) {
+            pageButton.classList.add("active");
+        }
+
+        paginationDiv.appendChild(pageButton);
+    }
+}
+
+// Запуск при загрузке страницы
+window.onload = function () {
+    loadXML();
+};
