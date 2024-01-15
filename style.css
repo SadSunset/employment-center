@@ -110,3 +110,27 @@
 .itc-slider-indicator-active {
     background-color: rgb(255 255 255 / 90%);
 }
+
+.vacancy {
+    margin-bottom: 20px;
+}
+
+.job-name {
+    font-weight: bold;
+}
+
+.description {
+    margin-top: 10px;
+}
+
+.salary {
+    color: green;
+}
+
+.btn-more {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #777;
+    color: #fff;
+    text-decoration: none;
+}

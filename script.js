@@ -559,3 +559,51 @@ class ItcSlider {
 }
 
 ItcSlider.createInstances();
+
+window.addEventListener('DOMContentLoaded', () => {
+    const xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            const xmlDoc = this.responseXML;
+            const vacancies = xmlDoc.getElementsByTagName('vacancy');
+
+            // Перебираем все вакансии
+            for (let i = 0; i < vacancies.length; i++) {
+                const vacancy = vacancies[i];
+                const jobName = vacancy.getElementsByTagName('job-name')[0].textContent;
+                //const description = vacancy.getElementsByTagName('description')[0].textContent;
+                const salary = vacancy.getElementsByTagName('salary')[0].textContent;
+                const url = vacancy.getElementsByTagName('url')[0].textContent;
+                // Создаем HTML элементы для отображения вакансии
+                const vacancyDiv = document.createElement('div');
+                vacancyDiv.classList.add('vacancy');
+
+                const jobNameDiv = document.createElement('div');
+                jobNameDiv.classList.add('job-name');
+                jobNameDiv.textContent = jobName;
+
+                // const descriptionDiv = document.createElement('div');
+                // descriptionDiv.classList.add('description');
+                // descriptionDiv.innerHTML = description;
+
+                const salaryDiv = document.createElement('div');
+                salaryDiv.classList.add('salary');
+                salaryDiv.textContent = `Зарплата: ${salary}`;
+
+                const btnMore = document.createElement('a');
+                btnMore.classList.add('btn-more');
+                btnMore.textContent = 'Подробнее';
+                btnMore.href = url;
+
+                // Добавляем HTML элементы на страницу
+                vacancyDiv.appendChild(jobNameDiv);
+                //vacancyDiv.appendChild(descriptionDiv);
+                vacancyDiv.appendChild(salaryDiv);
+                vacancyDiv.appendChild(btnMore);
+                document.getElementById('vacancies-container').appendChild(vacancyDiv);
+            }
+        }
+    };
+    xhttp.open('GET', 'example_1.xml', true);
+    xhttp.send();
+});
