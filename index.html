@@ -8,7 +8,6 @@
     <link href="style.css" rel="stylesheet">
     <script defer src="script.js"></script>
     <style>
-        
         body {
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
@@ -99,6 +98,17 @@
 
     </div>
     <h1>Вакансии</h1>
+    <div id="filters">
+        <select id="filterJobName" onchange="filterVacancies()">
+            <option value="">Все вакансии</option>
+            <option value="developer">Разработчик</option>
+            <option value="designer">Дизайнер</option>
+            <option value="manager">Менеджер</option>
+        </select>
+        <input type="number" id="filterSalary" placeholder="Зарплата" oninput="filterVacancies()">
+        <input type="checkbox" id="filterNoSalary" onchange="filterVacancies()">
+        <label for="filterNoSalary">Без зарплаты</label>
+    </div>
     <div id="vacancies"></div>
     <div class="pagination"></div>
 </body>

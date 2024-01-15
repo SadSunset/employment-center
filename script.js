@@ -577,17 +577,20 @@ function loadXML() {
     xmlhttp.send();
 }
 
+
+
 // Отображение вакансий
-function displayVacancies(pageNumber) {
+function displayVacancies(pageNumber, filteredVacancies) {
     var vacanciesDiv = document.getElementById("vacancies");
     var startIndex = (pageNumber - 1) * vacanciesPerPage;
     var endIndex = startIndex + vacanciesPerPage;
 
     // Очищаем предыдущие результаты
     vacanciesDiv.innerHTML = "";
+    var vacanciesToDisplay = filteredVacancies || vacancies;
 
     // Выводим вакансии текущей страницы
-    for (var i = startIndex; i < endIndex && i < vacancies.length; i++) {
+    for (var i = startIndex; i < endIndex && i < vacanciesToDisplay.length; i++) {
         var vacancy = vacancies[i];
         var jobName = vacancy.getElementsByTagName("job-name")[0].textContent;
         var salary = vacancy.getElementsByTagName("salary")[0].textContent;
@@ -616,9 +619,41 @@ function displayVacancies(pageNumber) {
     }
 
     // Отображение пагинации
-    displayPagination();
+    if (!filteredVacancies) {
+        displayPagination();
+    }
 }
 
+// Фильтрация вакансий
+function filterVacancies() {
+    var filterJobName = document.getElementById("filterJobName").value.toLowerCase();
+    var filterSalary = document.getElementById("filterSalary").value;
+    var filterNoSalary = document.getElementById("filterNoSalary").checked;
+
+    var filteredVacancies = Array.from(vacancies).filter(function (vacancy) {
+        var jobName = vacancy.getElementsByTagName("job-name")[0].textContent.toLowerCase();
+        var salary = vacancy.getElementsByTagName("salary")[0].textContent;
+
+        // Фильтрация по названию вакансии
+        if (filterJobName && !jobName.includes(filterJobName)) {
+            return false;
+        }
+
+        // Фильтрация по зарплате
+        if (filterSalary && salary !== filterSalary) {
+            return false;
+        }
+
+        // Фильтрация по вакансиям без зарплаты
+        if (filterNoSalary && salary === "") {
+            return false;
+        }
+
+        return true;
+    });
+
+    displayVacancies(currentPage, filteredVacancies);
+}
 // Отображение пагинации
 function displayPagination() {
     var paginationDiv = document.querySelector(".pagination");
@@ -641,6 +676,7 @@ function displayPagination() {
         paginationDiv.appendChild(pageButton);
     }
 }
+
 
 // Запуск при загрузке страницы
 window.onload = function () {
